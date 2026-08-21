@@ -1,134 +1,113 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ocean Hazard Monitor</title>
-    <!-- Modern Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <!-- Leaflet.js CSS -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
-    <!-- Custom Style -->
-    <link rel="stylesheet" href="css/style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ocean Hazard Reporting & Mapping System</title>
+  <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <div class="app-container">
-        <!-- Sidebar for Controls & Reporting -->
-        <aside class="sidebar">
-            <div class="logo-area">
-                <span class="logo-icon">🌊</span>
-                <div class="logo-text">
-                    <h1>OceanHazard</h1>
-                    <span>Guardian Platform</span>
-                </div>
-            </div>
-
-            <div class="sidebar-content">
-                <section class="card form-section">
-                    <h2>Report a Hazard</h2>
-                    <p class="subtitle">Submit real-time hazards found at sea or coastlines.</p>
-                    
-                    <form id="reportForm">
-                        <div class="form-group">
-                            <label for="description">Hazard Description</label>
-                            <textarea id="description" placeholder="E.g. Oil slick spreading near the shore, plastic bottles accumulated..."></textarea>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="image">Upload Proof (Image)</label>
-                            <div class="file-upload-wrapper" id="fileUploadWrapper">
-                                <input id="image" type="file" accept="image/png,image/jpeg,image/webp">
-                                <div class="upload-dummy">
-                                    <span class="upload-icon">📸</span>
-                                    <span class="upload-label">Choose image or drag here</span>
-                                </div>
-                                <img id="imagePreview" class="image-preview" alt="Preview" style="display: none;">
-                            </div>
-                        </div>
-                        
-                        <div class="form-group location-group">
-                            <label>Location Coordinates</label>
-                            <div class="coord-display">
-                                <span id="locationText" class="placeholder">Click on the map to select location</span>
-                            </div>
-                            <input type="hidden" id="latitude">
-                            <input type="hidden" id="longitude">
-                        </div>
-                        
-                        <button type="submit" id="submitBtn">
-                            <span>Submit Report</span>
-                            <div class="spinner" style="display: none;"></div>
-                        </button>
-                    </form>
-                    
-                    <div id="result" class="result-container" style="display: none;"></div>
-                </section>
-            </div>
-        </aside>
-
-        <!-- Main Display: Map and Stats Dashboard -->
-        <main class="main-content">
-            <!-- Stats Dashboard Header -->
-            <header class="dashboard-header">
-                <div class="stats-grid">
-                    <div class="stat-card total">
-                        <div class="stat-icon">📊</div>
-                        <div class="stat-info">
-                            <span class="stat-label">Total Reports</span>
-                            <strong id="totalReports" class="stat-value">0</strong>
-                        </div>
-                    </div>
-                    <div class="stat-card high">
-                        <div class="stat-icon">⚠️</div>
-                        <div class="stat-info">
-                            <span class="stat-label">High Severity</span>
-                            <strong id="highReports" class="stat-value">0</strong>
-                        </div>
-                    </div>
-                    <div class="stat-card medium">
-                        <div class="stat-icon">⚡</div>
-                        <div class="stat-info">
-                            <span class="stat-label">Medium Severity</span>
-                            <strong id="mediumReports" class="stat-value">0</strong>
-                        </div>
-                    </div>
-                </div>
-            </header>
-
-            <!-- Map Viewport -->
-            <section class="map-section">
-                <div class="section-title">
-                    <h2>Live Ocean Hazard Map</h2>
-                    <span class="badge live">LIVE TRACKING</span>
-                </div>
-                <div class="map-wrapper">
-                    <div id="map"></div>
-                </div>
-            </section>
-
-            <!-- Charts & Analytics -->
-            <section class="analytics-section">
-                <div class="card chart-card">
-                    <h2>Hazard Category Distribution</h2>
-                    <div class="chart-wrapper">
-                        <canvas id="categoryChart"></canvas>
-                    </div>
-                </div>
-            </section>
-        </main>
+  <header class="hero">
+    <div class="hero-content">
+      <div class="brand">🌊 OceanWatch</div>
+      <h1>Ocean Hazard Reporting & Mapping System</h1>
+      <p>Report ocean hazards quickly and help monitor potentially dangerous conditions.</p>
     </div>
+  </header>
 
-    <!-- Leaflet.js -->
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
-    <!-- Application Scripts -->
-    <script src="js/api.js"></script>
-    <script src="js/map.js"></script>
-    <script src="js/dashboard.js"></script>
-    <script src="js/app.js"></script>
+  <main class="container">
+    <section class="card">
+      <div class="section-heading">
+        <span class="step">01</span>
+        <div>
+          <h2>Submit a Hazard Report</h2>
+          <p>Upload an image and provide the observation details.</p>
+        </div>
+      </div>
+
+      <form id="reportForm">
+        <div class="upload-area" id="uploadArea">
+          <input type="file" id="imageInput" accept="image/*" hidden>
+          <div id="uploadPrompt">
+            <div class="upload-icon">📷</div>
+            <h3>Upload hazard image</h3>
+            <p>JPG, PNG or WEBP • Choose a clear image</p>
+            <button type="button" class="secondary-btn" id="chooseImageBtn">Choose Image</button>
+          </div>
+
+          <div class="preview-wrap hidden" id="previewWrap">
+            <img id="imagePreview" alt="Selected hazard preview">
+            <button type="button" class="remove-btn" id="removeImageBtn">Remove image</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="description">Description</label>
+          <textarea id="description" rows="4"
+            placeholder="Describe what you observed..."></textarea>
+        </div>
+
+        <div class="location-grid">
+          <div class="field">
+            <label for="latitude">Latitude</label>
+            <input id="latitude" type="number" step="any" placeholder="e.g. 19.0760">
+          </div>
+          <div class="field">
+            <label for="longitude">Longitude</label>
+            <input id="longitude" type="number" step="any" placeholder="e.g. 72.8777">
+          </div>
+        </div>
+
+        <button class="primary-btn" id="submitBtn" type="submit">
+          <span>🚨</span> Submit Report
+        </button>
+      </form>
+
+      <div id="status" class="status hidden" role="status"></div>
+    </section>
+
+    <section class="card result-card hidden" id="resultCard">
+      <div class="section-heading">
+        <span class="step success-step">02</span>
+        <div>
+          <h2>Analysis Result</h2>
+          <p>The submitted image has been analyzed.</p>
+        </div>
+      </div>
+
+      <div class="result-grid">
+        <div class="result-item">
+          <span>Category</span>
+          <strong id="resultCategory">—</strong>
+        </div>
+        <div class="result-item">
+          <span>Confidence</span>
+          <strong id="resultConfidence">—</strong>
+        </div>
+        <div class="result-item">
+          <span>Severity</span>
+          <strong id="resultSeverity">—</strong>
+        </div>
+      </div>
+
+      <div class="result-description">
+        <span>Description</span>
+        <p id="resultDescription">—</p>
+      </div>
+    </section>
+
+    <section class="info-strip">
+      <div>⚡ Fast reporting</div>
+      <div>🖼️ Image-based analysis</div>
+      <div>📍 Location aware</div>
+    </section>
+  </main>
+
+  <footer>
+    <p>Ocean Hazard Reporting & Mapping System • Frontend Prototype</p>
+  </footer>
+
+  <script src="js/api.js"></script>
+  <script src="js/app.js"></script>
 </body>
 </html>
