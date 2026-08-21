@@ -109,7 +109,6 @@ reportForm.addEventListener("submit", async event => {
 
     setLoading(true);
     resultCard.classList.add("hidden");
-
     try {
         const result = await submitReport(formData);
 
@@ -125,6 +124,9 @@ reportForm.addEventListener("submit", async event => {
         // Clear input form (except coordinates)
         document.getElementById("description").value = "";
         clearImage();
+        if (typeof clearSelectionMarker === "function") {
+            clearSelectionMarker();
+        }
 
         // Refresh dynamic components (Map, stats dashboard)
         if (typeof getReports === "function" && typeof renderReportsOnMap === "function") {
@@ -132,7 +134,6 @@ reportForm.addEventListener("submit", async event => {
             renderReportsOnMap(reports);
             updateDashboard(reports);
         }
-
     } catch (error) {
         showStatus(error.message || "An error occurred during submission.", "error");
     } finally {
