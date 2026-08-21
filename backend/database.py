@@ -44,10 +44,24 @@ def insert_report(category, severity, description,
     conn.close()
     return report_id
 
-def get_reports():
+def get_reports(category=None, severity=None):
     conn = get_connection()
-    rows = conn.execute(
-        "SELECT * FROM reports ORDER BY created_at DESC"
-    ).fetchall()
+    query = "SELECT * FROM reports"
+    params = []
+    conditions = []
+    
+    if category:
+        conditions.append("category = ?")
+        params.append(category)
+    if severity:
+        conditions.append("severity = ?")
+        params.append(severity)
+        
+    if conditions:
+        query += " WHERE " + " AND ".join(conditions)
+        
+    query += " ORDER BY created_at DESC"
+    
+    rows = conn.execute(query, params).fetchall()
     conn.close()
     return [dict(row) for row in rows]

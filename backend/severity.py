@@ -1,7 +1,7 @@
 def calculate_severity(category):
-    category = category.lower()
-    if category in ["oil spill", "large debris"]:
+    cat_lower = category.lower()
+    if "oil" in cat_lower or "chemical" in cat_lower or "spill" in cat_lower:
         return "High"
-    if category in ["plastic waste", "marine debris"]:
+    if "plastic" in cat_lower or "debris" in cat_lower or "waste" in cat_lower:
         return "Medium"
     return "Low"
