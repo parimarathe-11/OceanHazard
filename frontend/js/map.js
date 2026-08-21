@@ -33,3 +33,10 @@ function renderReportsOnMap(reports) {
         markers.push(marker);
     });
 }
+
+// Recalculate map container size after page loads to prevent height collapse bugs
+window.addEventListener("DOMContentLoaded", () => {
+    setTimeout(() => {
+        map.invalidateSize();
+    }, 100);
+});
