@@ -62,10 +62,13 @@ form.addEventListener("submit", async (event) => {
         `;
         resultBox.style.display = "block";
         
-        // Clear form (except coordinates)
+        // Clear form and map selection marker
         form.reset();
         imagePreview.style.display = "none";
         uploadDummy.style.display = "flex";
+        if (typeof clearSelectionMarker === "function") {
+            clearSelectionMarker();
+        }
         
         // Refresh app state
         const reports = await getReports();
