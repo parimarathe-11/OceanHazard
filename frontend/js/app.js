@@ -1,93 +1,184 @@
-const form = document.getElementById("reportForm");
-const submitBtn = document.getElementById("submitBtn");
-const imageInput = document.getElementById("image");
+const imageInput = document.getElementById("imageInput");
+const chooseImageBtn = document.getElementById("chooseImageBtn");
+const removeImageBtn = document.getElementById("removeImageBtn");
+const uploadArea = document.getElementById("uploadArea");
+const uploadPrompt = document.getElementById("uploadPrompt");
+const previewWrap = document.getElementById("previewWrap");
 const imagePreview = document.getElementById("imagePreview");
-const uploadDummy = document.querySelector(".upload-dummy");
+const reportForm = document.getElementById("reportForm");
+const submitBtn = document.getElementById("submitBtn");
+const statusBox = document.getElementById("status");
+const resultCard = document.getElementById("resultCard");
 
-// Show image preview when a file is selected
+// Trigger file input
+chooseImageBtn.addEventListener("click", () => imageInput.click());
+
 imageInput.addEventListener("change", () => {
-    const file = imageInput.files[0];
+    if (imageInput.files.length) showPreview(imageInput.files[0]);
+});
+
+removeImageBtn.addEventListener("click", clearImage);
+
+function showPreview(file) {
+    if (!file.type.startsWith("image/")) {
+        showStatus("Please choose a valid image file (PNG, JPG, JPEG, WEBP).", "error");
+        imageInput.value = "";
+        return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+        showStatus("Image file size exceeds the 5MB limit.", "error");
+        imageInput.value = "";
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = event => {
+        imagePreview.src = event.target.result;
+        uploadPrompt.classList.add("hidden");
+        previewWrap.classList.remove("hidden");
+        hideStatus();
+    };
+    reader.readAsDataURL(file);
+}
+
+function clearImage() {
+    imageInput.value = "";
+    imagePreview.src = "";
+    previewWrap.classList.add("hidden");
+    uploadPrompt.classList.remove("hidden");
+    hideStatus();
+}
+
+// Drag & Drop Listeners
+uploadArea.addEventListener("dragover", event => {
+    event.preventDefault();
+    uploadArea.classList.add("dragover");
+});
+
+uploadArea.addEventListener("dragleave", () => {
+    uploadArea.classList.remove("dragover");
+});
+
+uploadArea.addEventListener("drop", event => {
+    event.preventDefault();
+    uploadArea.classList.remove("dragover");
+
+    const file = event.dataTransfer.files[0];
     if (file) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            imagePreview.src = e.target.result;
-            imagePreview.style.display = "block";
-            uploadDummy.style.display = "none";
-        };
-        reader.readAsDataURL(file);
-    } else {
-        imagePreview.style.display = "none";
-        uploadDummy.style.display = "flex";
+        imageInput.files = event.dataTransfer.files;
+        showPreview(file);
     }
 });
 
-form.addEventListener("submit", async (event) => {
+// Submit Form Handler
+reportForm.addEventListener("submit", async event => {
     event.preventDefault();
-    
+
     const image = imageInput.files[0];
-    const description = document.getElementById("description").value;
-    const latitude = document.getElementById("latitude").value;
-    const longitude = document.getElementById("longitude").value;
-    
-    if (!image || !latitude || !longitude) {
-        alert("Upload an image and select a map location.");
+    const description = document.getElementById("description").value.trim();
+    const latitude = document.getElementById("latitude").value.trim();
+    const longitude = document.getElementById("longitude").value.trim();
+
+    if (!image) {
+        showStatus("Please upload a hazard image before submitting.", "error");
         return;
     }
-    
+
+    if (!latitude || !longitude) {
+        showStatus("Please select a location on the map or type coordinates.", "error");
+        return;
+    }
+
+    const latVal = parseFloat(latitude);
+    const lngVal = parseFloat(longitude);
+
+    if (isNaN(latVal) || latVal < -90 || latVal > 90) {
+        showStatus("Latitude must be a valid number between -90 and 90.", "error");
+        return;
+    }
+    if (isNaN(lngVal) || lngVal < -180 || lngVal > 180) {
+        showStatus("Longitude must be a valid number between -180 and 180.", "error");
+        return;
+    }
+
     const formData = new FormData();
-    formData.append("image", image);
     formData.append("description", description);
     formData.append("latitude", latitude);
     formData.append("longitude", longitude);
-    
-    // Toggle loading states
-    submitBtn.disabled = true;
-    const btnText = submitBtn.querySelector("span");
-    const spinner = submitBtn.querySelector(".spinner");
-    btnText.textContent = "Analyzing Image...";
-    spinner.style.display = "block";
-    
-    const resultBox = document.getElementById("result");
-    resultBox.style.display = "none";
-    
+    formData.append("image", image);
+
+    setLoading(true);
+    resultCard.classList.add("hidden");
+
     try {
-        const data = await submitReport(formData);
-        
-        // Show styled result feedback
-        resultBox.innerHTML = `
-            <h3>Analysis Complete</h3>
-            <p><strong>Category:</strong> ${data.category.toUpperCase()}</p>
-            <p><strong>Confidence:</strong> ${(data.confidence * 100).toFixed(0)}%</p>
-            <p><strong>Severity:</strong> <span class="badge" style="background-color: var(--${data.severity.toLowerCase()}-severity); color: #fff; padding: 2px 6px; border-radius: 4px; font-weight: bold;">${data.severity}</span></p>
-        `;
-        resultBox.style.display = "block";
-        
-        // Clear form (except coordinates)
-        form.reset();
-        imagePreview.style.display = "none";
-        uploadDummy.style.display = "flex";
-        
-        // Refresh app state
-        const reports = await getReports();
-        renderReportsOnMap(reports);
-        updateDashboard(reports);
+        const result = await submitReport(formData);
+
+        // Populate Result Details
+        document.getElementById("resultCategory").textContent = result.category ?? "Not available";
+        document.getElementById("resultConfidence").textContent = formatConfidence(result.confidence);
+        document.getElementById("resultSeverity").textContent = result.severity ?? "Not available";
+        document.getElementById("resultDescription").textContent = result.description || "No description provided.";
+
+        resultCard.classList.remove("hidden");
+        showStatus("Report submitted and processed successfully!", "success");
+
+        // Clear input form (except coordinates)
+        document.getElementById("description").value = "";
+        clearImage();
+
+        // Refresh dynamic components (Map, stats dashboard)
+        if (typeof getReports === "function" && typeof renderReportsOnMap === "function") {
+            const reports = await getReports();
+            renderReportsOnMap(reports);
+            updateDashboard(reports);
+        }
+
     } catch (error) {
-        alert(error.message);
+        showStatus(error.message || "An error occurred during submission.", "error");
     } finally {
-        submitBtn.disabled = false;
-        btnText.textContent = "Submit Report";
-        spinner.style.display = "none";
+        setLoading(false);
     }
 });
 
-// App Initialization
+function formatConfidence(value) {
+    if (value === null || value === undefined || value === "") return "Not available";
+    const number = Number(value);
+    if (!Number.isNaN(number)) {
+        return number <= 1 ? `${Math.round(number * 100)}%` : `${Math.round(number)}%`;
+    }
+    return String(value);
+}
+
+function setLoading(isLoading) {
+    submitBtn.disabled = isLoading;
+    if (isLoading) {
+        submitBtn.innerHTML = "⏳ Analyzing...";
+        showStatus("Uploading proof and running AI models. Please wait...", "loading");
+    } else {
+        submitBtn.innerHTML = "🚨 Submit Report";
+    }
+}
+
+function showStatus(message, type) {
+    statusBox.textContent = message;
+    statusBox.className = `status ${type}`;
+    statusBox.classList.remove("hidden");
+}
+
+function hideStatus() {
+    statusBox.className = "status hidden";
+}
+
+// App Bootstrapping
 async function init() {
     try {
-        const reports = await getReports();
-        renderReportsOnMap(reports);
-        updateDashboard(reports);
+        if (typeof getReports === "function" && typeof renderReportsOnMap === "function") {
+            const reports = await getReports();
+            renderReportsOnMap(reports);
+            updateDashboard(reports);
+        }
     } catch (error) {
-        console.error("Could not fetch initial reports:", error);
+        console.error("Initialization failed:", error);
     }
 }
 

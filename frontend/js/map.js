@@ -9,11 +9,16 @@ let markers = [];
 
 map.on("click", (event) => {
     const { lat, lng } = event.latlng;
-    document.getElementById("latitude").value = lat;
-    document.getElementById("longitude").value = lng;
-    document.getElementById("locationText").textContent =
-        `Selected: ${lat.toFixed(5)}, ${lng.toFixed(5)}`;
-    document.getElementById("locationText").classList.remove("placeholder");
+    const latInput = document.getElementById("latitude");
+    const lngInput = document.getElementById("longitude");
+    if (latInput) latInput.value = lat.toFixed(5);
+    if (lngInput) lngInput.value = lng.toFixed(5);
+    
+    const locText = document.getElementById("locationText");
+    if (locText) {
+        locText.textContent = `Selected: ${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+        locText.classList.remove("placeholder");
+    }
 });
 
 function renderReportsOnMap(reports) {

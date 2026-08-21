@@ -470,3 +470,239 @@ button[type="submit"]:disabled {
     color: var(--accent);
     font-size: 14px;
 }
+
+/* Shreya's Frontend Integration Styles */
+.upload-area {
+    position: relative;
+    width: 100%;
+    height: 120px;
+    border: 2px dashed var(--border-color);
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    overflow: hidden;
+    background-color: rgba(0, 0, 0, 0.2);
+    transition: var(--transition);
+    padding: 12px;
+    text-align: center;
+}
+
+.upload-area.dragover {
+    border-color: var(--accent);
+    background-color: rgba(6, 182, 212, 0.05);
+}
+
+#uploadPrompt {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.upload-icon {
+    font-size: 24px;
+    margin-bottom: 2px;
+}
+
+#uploadPrompt h3 {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-main);
+}
+
+#uploadPrompt p {
+    font-size: 10px;
+    color: var(--text-muted);
+}
+
+.secondary-btn {
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 4px;
+    font-family: var(--font-outfit);
+    transition: var(--transition);
+}
+
+.secondary-btn:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.preview-wrap {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.preview-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.remove-btn {
+    position: absolute;
+    bottom: 6px;
+    right: 6px;
+    background-color: rgba(244, 63, 94, 0.9);
+    color: white;
+    border: none;
+    padding: 3px 6px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: var(--font-outfit);
+    transition: var(--transition);
+}
+
+.remove-btn:hover {
+    background-color: var(--high-severity);
+}
+
+.location-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 16px;
+    margin-bottom: 16px;
+}
+
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.field label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-muted);
+}
+
+.field input {
+    background-color: rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 8px 10px;
+    color: var(--text-main);
+    font-family: var(--font-outfit);
+    font-size: 12px;
+    transition: var(--transition);
+}
+
+.field input:focus {
+    border-color: var(--accent);
+    outline: none;
+}
+
+.status {
+    margin-top: 12px;
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 500;
+    text-align: center;
+    line-height: 1.3;
+}
+
+.status.success {
+    background-color: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+    border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.status.error {
+    background-color: rgba(244, 63, 94, 0.1);
+    color: var(--high-severity);
+    border: 1px solid rgba(244, 63, 94, 0.2);
+}
+
+.status.loading {
+    background-color: rgba(6, 182, 212, 0.1);
+    color: var(--accent);
+    border: 1px solid rgba(6, 182, 212, 0.2);
+}
+
+.result-container {
+    margin-top: 16px;
+    border-top: 1px solid var(--border-color);
+    padding-top: 16px;
+}
+
+.result-container h3 {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: var(--accent);
+}
+
+.result-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.result-item {
+    background-color: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--border-color);
+    padding: 8px;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    text-align: center;
+}
+
+.result-item span {
+    font-size: 9px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.result-item strong {
+    font-size: 12px;
+    color: var(--text-main);
+}
+
+.result-description {
+    background-color: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--border-color);
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 12px;
+}
+
+.result-description span {
+    display: block;
+    font-size: 9px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-bottom: 3px;
+    letter-spacing: 0.5px;
+}
+
+.result-description p {
+    color: var(--text-main);
+    line-height: 1.35;
+}
+
+.hidden {
+    display: none !important;
+}
