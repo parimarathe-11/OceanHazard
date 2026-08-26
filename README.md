@@ -1,6 +1,6 @@
 # Ocean Hazard Reporting & Mapping System
 
-An AI-assisted crowdsourced platform for reporting, analyzing, and mapping marine hazards, developed for Saturday demonstration.
+An AI-assisted crowdsourced platform for reporting, analyzing, and mapping marine hazards.
 
 ## Project Structure
 - `backend/`: Flask web server, SQLite database integration, and image analysis service.
